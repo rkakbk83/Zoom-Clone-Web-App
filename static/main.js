@@ -3,12 +3,12 @@ const main__chat__window = document.getElementById("main__chat_window"); // Get 
 const videoGrids = document.getElementById("video-grids"); // This div will contain various more div in which the video element and name will appear
 const myVideo = document.createElement("video"); // This video element will show us our own video
 const chat = document.getElementById("chat"); // Get our main right div
-    OtherUsername = ""; // It will hold our other user's name
+OtherUsername = ""; // It will hold our other user's name
 chat.hidden = true; // Hide the chat window at first
 myVideo.muted = true; // Sets The video's audeo to mute
 
 window.onload = () => { // When Window load
-    $(document).ready(function() {
+    $(document).ready(function () {
         $("#getCodeModal").modal("show"); // Show our modal
     });
 };
@@ -56,21 +56,21 @@ navigator.mediaDevices // Webrtc provides a standard api for accessing cameras a
     });
 peer.on("call", (call) => { // When We get a call
     getUserMedia({ video: true, audio: true }, // Get our stream
-        function(stream) {
+        function (stream) {
             call.answer(stream); // Answer the call with our stream
             const video = document.createElement("video");  // Create a video element
-            call.on("stream", function(remoteStream) { // Get other user's stream
+            call.on("stream", function (remoteStream) { // Get other user's stream
                 addVideoStream(video, remoteStream, OtherUsername); // And other user's stream to our window
             });
         },
-        function(err) {
+        function (err) {
             console.log("Failed to get local stream", err);
         }
     );
 });
 
 peer.on("open", (id) => { // When ever user joins every user is given a unique id and its very imposrtant to know their id when communicating
-    socket.emit("join-room", roomId, id, myname); 
+    socket.emit("join-room", roomId, id, myname);
 });
 
 socket.on("createMessage", (message) => { // THis function appends a message to the chat area when we or ther user sends message
@@ -99,7 +99,7 @@ const RemoveUnusedDivs = () => { // This function is used to remove unused divs 
 
 const connectToNewUser = (userId, streams, myname) => {
     const call = peer.call(userId, streams); // This will call the other user id with our own stream
-    const video = document.createElement("video"); 
+    const video = document.createElement("video");
     call.on("stream", (userVideoStream) => { // When other user answers the call they send their steam to this user
         //       console.log(userVideoStream);
         addVideoStream(video, userVideoStream, myname); // And that stream
@@ -115,9 +115,12 @@ const cancel = () => { // Hide our invite modalwhen we click cancel
     $("#getCodeModal").modal("hide");
 };
 
-const copy = async() => { // copy our Invitation link when we press the copy button
+const copy = async () => { // copy our Invitation link when we press the copy button
     const roomid = document.getElementById("roomid").innerText;
-    await navigator.clipboard.writeText("http://localhost:3030/join/" + roomid);
+    const meetURL = window.location.href;
+    const meetLink = meetURL.split('join/');
+    // console.log(meetLink[0]);
+    await navigator.clipboard.writeText(meetLink[0] + "join/" + roomid);
 };
 const invitebox = () => { // SHow our model when we click
     $("#getCodeModal").modal("show");
@@ -145,14 +148,14 @@ const VideomuteUnmute = () => {
     }
 };
 const showchat = () => { // Show chat window or not
-    if (chat.hidden == false) { 
+    if (chat.hidden == false) {
         chat.hidden = true; // Dont Show
     } else {
         chat.hidden = false; // SHow
     }
 };
 
-const addVideoStream = (videoEl, stream, name) => { 
+const addVideoStream = (videoEl, stream, name) => {
     videoEl.srcObject = stream; // Set the stream to the video element that we passed as arguments
     videoEl.addEventListener("loadedmetadata", () => { // When all the metadata has been loaded
         videoEl.play(); // Play the video
